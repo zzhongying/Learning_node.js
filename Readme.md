@@ -58,3 +58,81 @@ server.listen(80, function () {
     console.log('server running at http://127.0.0.1:80');
  })
 ```
+
+# 二、node中的模块化
+
+> - 模块作用域
+和函数作用域相似，在自定义模块中定义的变量、方法等成员，只能在当前模块内被访问。这种模块级别的访问限制，叫做模块作用域
+>- module对象:
+在自定义对象中，可以使用module.exports对象，将模块内成员共享出去，供外界使用。外界使用require()方法导入自定义模块中的内容。
+
+## 1. commonJS规范
+Node.js中常采用 CommonJS 模块规范，主要提供了module、exports、require、global几个环境变量来实现模块化。每个文件就是一个模块，有自己的作用域。在一个文件里面定义的变量、函数、类，都是私有的，对其他文件不可见。commonjs采用同步的方式加载模块，在服务端，这种方式不会出现问题，因为模块文件都存在本地，读取速度很快。但是如果在网页端使用commonjs方式进行模块化，由于网络的原因，就可能出现加载问题，所以nodejs是commonjs的最佳实践。主要规定了：
+1. 每个模块内部，module变量代表当前模块
+2. module变量是一个对象，它的exports属性（即module.exports）是对外的接口
+3. 加载某个模块，其实是加载该模块的module.exports属性。require()方法用于加载模块
+
+**模块的加载机制：**
+- CommonJS模块的加载机制是，输入的是被输出的值的拷贝。也就是说，**一旦输出一个值，模块内部的变化就影响不到这个值**。主要是因为输出的值是个原始数据类型的值，会被缓存，引用类型则不一定。这点与ES6模块化有重大差异
+- **首先使用./或者../的形式加载自定义模块：**在使用require导入自定义模块时，如果省略了文件的扩展名，则Node.js会按照顺序分别从尝试加载以下文件：
+  - 按照确切的文件名进行加载
+  - 补全.js扩展名加载
+  - 补全.json扩展名加载
+  - 补全.node扩展名加载
+  - 加载失败，终端报错
+- 如果传递给require()的模块标识符不是一个内置模块，则Node.js会从当前模块的父目录开始，尝试从`/node_modules`文件夹中加载第三方模块。**如果没有找到对应的第三方模块，则移动到再上一层父目录中进行加载，直到系统的根目录**
+# 三、Express框架
+
+定义：基于Node.js平台，快速，开发，极简的web开发框架，基于Node.js内置的http模块封装，是用于专门创建web服务器的。本质上时npm上的第三方包，提供了快速创建Web服务器的便捷方法。
+
+## 1. 创建基本的服务器
+
+``` js
+//导入express
+const express = require('express')
+
+//创建web服务器
+const app = express()
+
+//监听GET请求，获取query参数
+
+app.get('/user',(req,res)=>{  //req:请求头  res：响应头
+    //res.send()方法向客户端响应一个JSON对象
+    res.send({name:'111',age:20})
+    //返回query阐述
+   console.log(req.query())
+   res.send(req.query)
+})
+
+//监听POST请求
+app.post('/user',(req,res)=>{
+    res.send('请求成功')
+})
+
+//获取动态参数
+app.get('/user/:id',(req,res)=>{   //user/zy，返回的是zy
+    //req.params默认是一个空对象
+    // 里面存放着通过:动态匹配到的参数值
+    console.log(req.params)  //动态匹配到的url参数
+    res.send(req.params)
+})
+
+
+//启动web服务器
+app.listen(80,()=>{
+    console.log('Server running at 127.0.0.1:80')
+})
+```
+## 2.托管静态资源
+1. express.static()
+使用`express.static()`方法，可以方便的创建一个静态资源服务器，使得public目录下的图片、css文件、JavaScript文件对外开放。Express在指定的静态目录中查找文件，并对外提供资源的访问路径。因此，**存放静态文件的目录名不会出现在URL中**。
+```js
+
+
+```
+
+
+
+
+
+
