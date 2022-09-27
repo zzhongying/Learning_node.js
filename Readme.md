@@ -123,13 +123,68 @@ app.listen(80,()=>{
     console.log('Server running at 127.0.0.1:80')
 })
 ```
-## 2.托管静态资源
+## 2. 托管静态资源
 1. express.static()
 使用`express.static()`方法，可以方便的创建一个静态资源服务器，使得public目录下的图片、css文件、JavaScript文件对外开放。Express在指定的静态目录中查找文件，并对外提供资源的访问路径。因此，**存放静态文件的目录名不会出现在URL中**。
 ```js
 
-
+app.use(express.static('../images'))
 ```
+当托管多个静态资源目录时，会多次调用express.static()函数，并按顺序查找所需文件。如果在当前目录中查找到所需文件，则直接返回，不执行后续文件。
+
+## 3. 路由模块
+在Express中，路由指的是客户端的请求与服务器处理函数之间的映射关系。Express中的路由主要由三部分组成，分别是请求的类型、请求的URL地址、处理函数。`app.METHOD(PATH,HANDLER)`。
+**路由模块化：**为了方便的对路由进行模块化管理，Express不建议将路由直接挂在到APP上，而是推荐将路由抽离为单独的模块。将路由抽离为单独的模块步骤如下：
+- 创建路由模块对应的.js文件
+``` js
+const express = require('express')
+```
+- 调用express.Router()函数创建路由对象
+``` js
+const router = express.Router()
+```
+- 向路由对象上挂在具体的路由
+``` js
+router.get('/user/list',function (req,res) { 
+    res.send('Get user List')
+ })
+
+ router.post('/user/add',function(req,res){
+    res.send('Add new user')
+ })
+```
+- 使用module.exports向外共享路由对象
+``` js
+ module.exports = router
+```
+- 使用app.use()函数注册路由模块
+``` js
+//导入路由模块
+const router = require('./rout')
+//注册路由模块
+app.use(router)
+```
+
+## 4. 中间件
+### 4.1 概念
+中间件的思想为洋葱模型 ,从外到内依次执行中间件。有了中间件的存在，我们将那些固定功能的代码封装起来，在每次访问路由后自动去执行我们用到的所有中间件，我们只需要把注意力放在编写我们的业务逻辑代码便可。Express中的中间件，本质上是一个function处理函数。
+![中间件](./images/2022-09-27-21-48-11.png)
+
+- 在中间件函数的形参列表中，**必须包含next参数**，即`app.get('/',function(req,res,next){})`.
+在路由中，处理函数只包含req和res。
+- **多个中间件之间，共享一份req和res**。基于这样的特性，我们可以在上游的中间件中，统一为req或res对象添加自定义的属性或者方法，供下游的中间件或路由进行使用。
+- 当定义多个全局中间件时，**按照注册顺序**执行中间件
+
+### 4.2 next函数
+next函数是实现多个中间件连续调用的关键，它表示把流转关系转交给下一个中间件或路由。
+
+
+
+
+
+
+
+
 
 
 
