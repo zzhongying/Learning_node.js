@@ -4,7 +4,13 @@ const router = require('./apiRouter')
 const app = express()
 
 
+//解决跨域问题
+const cors = require('cors')
+app.use(cors())
+
+//挂载路由模块
 app.use('/api',router)
+
 
 
 

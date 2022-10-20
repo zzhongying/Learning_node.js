@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+</head>
+<body>
+    <button id="btnGET">GET</button>
+    <button id="btnPOST">POST</button>
+</body>
+<script>
+    $(function(){
+        //1.测试get请求
+        $('#btnGet').on('click', function () {
+            $.ajax({
+                type:'get',
+                url:'http://127.0.0.1/api/get',
+                data:{name:'zs', age:20},
+                success:function(res){
+                    console.log(res)
+                }
+            })
+        });
+
+
+        //2.测试post请求
+        $('#btnPOST').on('click', function () {
+            $.ajax({
+                type:'get',
+                url:'http://127.0.0.1/api/post',
+                data:{bookname:'123', author:'noone'},
+                success:function(res){
+                    console.log(res)
+                }
+            })
+        });
+    })
+</script>
+</html>
