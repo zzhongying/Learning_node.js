@@ -3,6 +3,8 @@
 const { use } = require("../router/user")
 const db = require('../db/index')
 const bcrypt = require('bcryptjs')  //引入密码加密模块
+const jwt= require('jsonwebtoken')
+const config = require('../config')  //导入全局配置文件
 
 //注册新用户
 exports.regUser = (req,res)=>{
@@ -86,12 +88,19 @@ exports.logUser = (req,res)=>{
         }
         //TODO：生成token，核心注意点：在生成token字符串时，一定要剔除密码和头像的值
         
+        const user = {...results[0],password:'',user_pic:''} 
+        console.log(user)
+    
+        //对用户信息加密，生成token,参数分别表示加密对象，加密密钥，token有效期
+        const tokenStr = jwt.sign(user,config.jwtSecretKey,{expiresIn:config.expiresIn})
+        console.log(tokenStr)
 
-        
-        
-        res.send('login OK')
-    
-    
+
+        res.send({
+            status:0,
+            message:'登录成功',
+            token: 'Bearer ' + tokenStr,
+        })
     })
 
  
